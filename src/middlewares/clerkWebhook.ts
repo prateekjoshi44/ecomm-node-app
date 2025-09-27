@@ -16,7 +16,7 @@ export const webhookMiddleware = async (req: Request, res: Response, _next: Next
             case 'user.created':
                 // Handle user creation
                 const user = await clerkClient.users.getUser(event.data.id);
-                const response = await prisma.users.upsert({
+                const response = await prisma.user.upsert({
                     where: { clerkId: user.id },
                     update: {
                         name: user.fullName || "",
@@ -37,9 +37,9 @@ export const webhookMiddleware = async (req: Request, res: Response, _next: Next
             case 'user.deleted':
                 // Handle user deletion from postgres
                 if (event.data.id) {
-                    const user = await prisma.users.findUnique({ where: { clerkId: event.data.id } });
+                    const user = await prisma.user.findUnique({ where: { clerkId: event.data.id } });
                     if (user) {
-                        const response = await prisma.users.delete({ where: { clerkId: event.data.id } });
+                        const response = await prisma.user.delete({ where: { clerkId: event.data.id } });
                         console.log("user deleted!!!", response)
                         if (response.id) {
                             res.status(201).send("User deleted from DB");

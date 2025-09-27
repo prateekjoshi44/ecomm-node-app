@@ -5,6 +5,7 @@ import { RegisterRoutes } from "../build/routes";
 import * as swaggerDocument from "../build/swagger.json";
 import { errorHandler } from "./error/errorHandler";
 import { webhookMiddleware } from "./middlewares/clerkWebhook";
+import { upload } from "./middlewares/upload";
 
 
 
@@ -17,6 +18,13 @@ app.use(
         extended: true,
     })
 );
+
+app.post("/upload", upload.single("file"), (_req, _res, _next) => {
+    console.log(_req.file)
+    _res.json({ file: _req.file });
+    // next(); // hand over to tsoa controller
+});
+
 app.use(json());
 
 (swaggerDocument as any).info.title = "Ecommerce API Docs";

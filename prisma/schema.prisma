@@ -8,17 +8,60 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model products {
-  id          String @id @default(uuid())
-  name        String
-  description String
-  price       Float
+enum Role {
+  USER
+  ADMIN
 }
 
-model users {
-  id         String    @default(uuid())
+enum OrderStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id         String    @id @default(uuid())
   name       String
   email      String?
   created_at DateTime? @default(now()) @db.Timestamp(6)
-  clerkId    String    @id
+  clerkId    String    @unique
+  role       Role      @default(USER)
+  orders     Order[]
+}
+
+model Product {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  imgUrl      String?
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @updatedAt @db.Timestamp(6)
+
+  orderItems OrderItem[]
+}
+
+model Order {
+  id        String      @id @default(uuid())
+  total     Float
+  createdAt DateTime    @default(now())
+  status    OrderStatus @default(PENDING)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  items OrderItem[]
+}
+
+model OrderItem {
+  id       String @id @default(uuid())
+  quantity Int
+  price    Float
+
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
 }
