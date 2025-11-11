@@ -13,3 +13,5 @@ build
 package-lock.json
 
 temp
+
+/prisma/dev.db
