@@ -28,6 +28,7 @@ model User {
   clerkId    String    @unique
   role       Role      @default(USER)
   orders     Order[]
+  upload     Upload[]
 }
 
 model Product {
@@ -35,13 +36,12 @@ model Product {
   name        String
   description String
   price       Float
-  imgUrl      String?
   created_at  DateTime? @default(now())
   updated_at  DateTime? @updatedAt
 
   orderItems OrderItem[]
-
-  like Like[]
+  upload     Upload[]
+  like       Like[]
 }
 
 model Order {
@@ -72,4 +72,18 @@ model Like {
   id        String  @id @default(nanoid())
   product   Product @relation(fields: [productId], references: [id])
   productId String
+}
+
+model Upload {
+  id  String @id @default(nanoid())
+  url String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
 }

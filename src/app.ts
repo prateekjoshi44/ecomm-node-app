@@ -7,21 +7,10 @@ import { errorHandler } from "./error/errorHandler";
 import { webhookMiddleware } from "./middlewares/clerkWebhook";
 import bodyParser from "body-parser";
 
-
-
 export const app = express();
-// const router = express.Router();
-
-// Use body parser to read sent json payloads
-// app.use(
-//     urlencoded({
-//         extended: true,
-//     })
-// );
 
 app.use(bodyParser.json())
 // app.use(bodyParser.urlencoded({ extended: true }))
-
 
 app.use(json());
 

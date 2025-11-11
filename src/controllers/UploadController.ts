@@ -2,6 +2,8 @@ import { Post, Route, Tags, UploadedFile } from "tsoa";
 import { BaseController, MsgRes } from "./BaseController";
 import fs from 'fs';
 import path from 'path';
+import { imagekit } from "../config/imagekit";
+
 
 @Route("/")
 @Tags("Upload")
@@ -25,7 +27,18 @@ export class FilesController extends BaseController {
             fs.writeFileSync(destinationPath, file.buffer);
         }
 
-        return this.createRes(`File uploaded successfully as ${path.basename(destinationPath)}`);
+        const filePath = destinationPath
+        const fileBuffer = fs.readFileSync(filePath);
+        const base64 = fileBuffer.toString('base64');
+        const result = await imagekit.upload({
+            file: base64,
+            fileName: `${Date.now()}-${file.originalname}`,
+            folder: '/ecomm-assets/images'
+        });
+        console.log("File uploaded:", result.url);
+        if (!result) return this.internalServerRes('Something Went wrong while uploading Image')
+        return this.createRes(`${result.url}`);
+
 
     }
 }

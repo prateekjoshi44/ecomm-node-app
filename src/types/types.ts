@@ -3,7 +3,6 @@ export interface Product {
     name: string;
     description: string;
     price: number;
-    imgUrl: string | null;
     created_at: Date | null;
     updated_at: Date | null;
 }

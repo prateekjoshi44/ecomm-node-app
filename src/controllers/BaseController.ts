@@ -11,6 +11,7 @@ export class BaseController extends Controller {
     };
 
     protected createRes(resource: string): MsgRes {
+        this.setStatus(201)
         return { message: `${resource} is created.` };
     }
 
