@@ -4,8 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL_DEV")
 }
 
 enum Role {
@@ -21,29 +21,31 @@ enum OrderStatus {
 }
 
 model User {
-  id         String    @id @default(uuid())
+  id         String    @id @default(nanoid())
   name       String
   email      String?
-  created_at DateTime? @default(now()) @db.Timestamp(6)
+  created_at DateTime? @default(now())
   clerkId    String    @unique
   role       Role      @default(USER)
   orders     Order[]
 }
 
 model Product {
-  id          String    @id @default(uuid())
+  id          String    @id @default(nanoid())
   name        String
   description String
   price       Float
   imgUrl      String?
-  created_at  DateTime? @default(now()) @db.Timestamp(6)
-  updated_at  DateTime? @updatedAt @db.Timestamp(6)
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @updatedAt
 
   orderItems OrderItem[]
+
+  like Like[]
 }
 
 model Order {
-  id        String      @id @default(uuid())
+  id        String      @id @default(nanoid())
   total     Float
   createdAt DateTime    @default(now())
   status    OrderStatus @default(PENDING)
@@ -55,13 +57,19 @@ model Order {
 }
 
 model OrderItem {
-  id       String @id @default(uuid())
+  id       String @id @default(nanoid())
   quantity Int
   price    Float
 
   order   Order  @relation(fields: [orderId], references: [id])
   orderId String
 
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+}
+
+model Like {
+  id        String  @id @default(nanoid())
   product   Product @relation(fields: [productId], references: [id])
   productId String
 }

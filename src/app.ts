@@ -1,11 +1,11 @@
 // src/app.ts
-import express, { json, urlencoded, Response as ExResponse, Request as ExRequest } from "express";
+import express, { json, Response as ExResponse, Request as ExRequest } from "express";
 import swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from "../build/routes";
 import * as swaggerDocument from "../build/swagger.json";
 import { errorHandler } from "./error/errorHandler";
 import { webhookMiddleware } from "./middlewares/clerkWebhook";
-import { upload } from "./middlewares/upload";
+import bodyParser from "body-parser";
 
 
 
@@ -13,17 +13,15 @@ export const app = express();
 // const router = express.Router();
 
 // Use body parser to read sent json payloads
-app.use(
-    urlencoded({
-        extended: true,
-    })
-);
+// app.use(
+//     urlencoded({
+//         extended: true,
+//     })
+// );
 
-app.post("/upload", upload.single("file"), (_req, _res, _next) => {
-    console.log(_req.file)
-    _res.json({ file: _req.file });
-    // next(); // hand over to tsoa controller
-});
+app.use(bodyParser.json())
+// app.use(bodyParser.urlencoded({ extended: true }))
+
 
 app.use(json());
 

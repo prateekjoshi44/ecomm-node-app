@@ -1,7 +1,8 @@
 import { Body, Get, Patch, Post, Query, Route, Tags } from "tsoa";
 import { BaseController, MsgRes } from "./BaseController";
 import { CreateOrderDto, Order } from "../../src/types/types";
-import { OrderStatus, prisma } from "../../prisma/prisma";
+import { prisma } from "../../prisma/prisma";
+import { OrderStatus } from "../Constants/enums";
 
 @Route("order")
 @Tags("Order")
