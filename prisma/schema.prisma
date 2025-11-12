@@ -29,6 +29,7 @@ model User {
   role       Role      @default(USER)
   orders     Order[]
   upload     Upload[]
+  like       Like[]
 }
 
 model Product {
@@ -72,17 +73,21 @@ model Like {
   id        String  @id @default(nanoid())
   product   Product @relation(fields: [productId], references: [id])
   productId String
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+
+  @@unique([productId, userId])
 }
 
 model Upload {
   id  String @id @default(nanoid())
   url String
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
 
-  product   Product @relation(fields: [productId], references: [id])
-  productId String
+  product   Product? @relation(fields: [productId], references: [id])
+  productId String?
 
   created_at DateTime? @default(now())
   updated_at DateTime? @updatedAt

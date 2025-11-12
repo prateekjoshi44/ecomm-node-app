@@ -7,6 +7,7 @@ export interface Product {
     updated_at: Date | null;
 }
 
+
 export interface User {
     name: string
     id: string

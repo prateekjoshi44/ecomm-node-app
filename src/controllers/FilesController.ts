@@ -1,8 +1,9 @@
-import { Post, Route, Tags, UploadedFile } from "tsoa";
+import { FormField, Post, Route, Tags, UploadedFile } from "tsoa";
 import { BaseController, MsgRes } from "./BaseController";
 import fs from 'fs';
 import path from 'path';
 import { imagekit } from "../config/imagekit";
+import { prisma } from "../../prisma/prisma";
 
 
 @Route("/")
@@ -11,8 +12,11 @@ export class FilesController extends BaseController {
     @Post("upload")
     public async uploadFile(
         @UploadedFile('file') file: Express.Multer.File,
-    ): Promise<MsgRes> {
+        @FormField() id: string,
+        @FormField() type: 'USER' | 'PRODUCT',
+    ): Promise<MsgRes | any> {
         // Always store file in local temp directory
+        // const { type, id } = body;
         const tempDir = path.join(__dirname, "../temp");
         if (!fs.existsSync(tempDir)) {
             fs.mkdirSync(tempDir);
@@ -37,7 +41,23 @@ export class FilesController extends BaseController {
         });
         console.log("File uploaded:", result.url);
         if (!result) return this.internalServerRes('Something Went wrong while uploading Image')
-        return this.createRes(`${result.url}`);
+        let uploadRes;
+        switch (type) {
+            case "USER":
+                uploadRes = await prisma.upload.create({
+                    data: { url: result.url, userId: id },
+                });
+                break;
+            case "PRODUCT":
+                uploadRes = await prisma.upload.create({
+                    data: { url: result.url, productId: id },
+                });
+                break;
+            default:
+                return this.badRequestRes("Invalid upload type");
+        }
+        if (!uploadRes) return this.badRequestRes("Something went wrong")
+        return uploadRes
 
 
     }

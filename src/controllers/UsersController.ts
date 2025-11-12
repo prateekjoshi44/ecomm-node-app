@@ -10,7 +10,11 @@ import { randomUUID } from "crypto";
 export class UserController extends BaseController {
   @Get('/')
   public async getAllUsers(): Promise<User[]> {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      include: {
+        upload: true,
+      },
+    });
     return users;
   }
 

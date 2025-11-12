@@ -15,18 +15,25 @@ export class ProductController extends BaseController {
                 where: {
                     id
                 },
+                include: {
+                    upload: true, like: true
+                }
             })
             if (!product) return this.notFoundRes("Product not found");
             return product;
         }
-        return await prisma.product.findMany();
+        return await prisma.product.findMany({
+            include: {
+                upload: true, like: true
+            }
+        });
     }
 
     @Post('/')
-    public async createProduct(@Body() body: Product): Promise<MsgRes | Product> {
+    public async createProduct(@Body() body: Omit<Product, 'created_at' | 'updated_at' | 'id'>): Promise<MsgRes | Product> {
         const { name, description, price } = body;
 
-        await prisma.product.create({
+        const product = await prisma.product.create({
             data: {
                 name,
                 description,
@@ -34,14 +41,14 @@ export class ProductController extends BaseController {
             },
         })
         this.setStatus(201)
-        return this.msgRes("Product created successfully")
+        return product
     }
 
     @Patch('/')
     public async updateProduct(@Query() id: string, @Body() body: Product): Promise<MsgRes | Product> {
         const { name, description, price } = body;
 
-        await prisma.product.update({
+        const product = await prisma.product.update({
             where: {
                 id
             },
@@ -52,7 +59,7 @@ export class ProductController extends BaseController {
             },
         })
         this.setStatus(200)
-        return this.msgRes("Product updated successfully")
+        return product
     }
 
     @Delete('/')
