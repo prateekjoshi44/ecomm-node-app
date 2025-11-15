@@ -1,12 +1,14 @@
-import { PrismaBetterSQLite3 } from '@prisma/adapter-better-sqlite3';
-import { PrismaClient } from '../generated/prisma'
+// import { PrismaBetterSQLite3 } from '@prisma/adapter-better-sqlite3';
+
+import { PrismaClient } from "@prisma/client";
 
 
-const adapter = new PrismaBetterSQLite3({
-    url: "file:./prisma/dev.db"
-}, {
-    timestampFormat: 'unixepoch-ms'
-});
 
-export const prisma = new PrismaClient({ adapter });
+// const adapter = new PrismaBetterSQLite3({
+//     url: "file:./prisma/dev.db"
+// }, {
+//     timestampFormat: 'unixepoch-ms'
+// });
+
+export const prisma = new PrismaClient();
 

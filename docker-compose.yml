@@ -1,0 +1,20 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        DATABASE_URL: ${DATABASE_URL_DEV:-file:./prisma/dev.db}
+    image: ecomm-node-app:latest
+
+    ports:
+      - "${PORT:-3000}:3000"
+
+    environment:
+      DATABASE_URL: ${DATABASE_URL_DEV:-file:./prisma/dev.db}
+      DATABASE_URL_DEV: ${DATABASE_URL_DEV:-file:./prisma/dev.db}
+      NODE_ENV: ${NODE_ENV:-production}
+
+    volumes:
+      - ./prisma/dev.db:/app/prisma/dev.db
+
+    depends_on: []

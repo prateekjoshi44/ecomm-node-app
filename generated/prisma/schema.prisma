@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String    @id @default(nanoid())
+  name       String
+  email      String?
+  created_at DateTime? @default(now())
+  clerkId    String    @unique
+  role       Role      @default(USER)
+  like       Like[]
+  orders     Order[]
+  upload     Upload[]
+}
+
+model Product {
+  id          String      @id @default(nanoid())
+  name        String
+  description String
+  price       Float
+  created_at  DateTime?   @default(now())
+  updated_at  DateTime?   @updatedAt
+  like        Like[]
+  orderItems  OrderItem[]
+  upload      Upload[]
+}
+
+model Order {
+  id        String      @id @default(nanoid())
+  total     Float
+  createdAt DateTime    @default(now())
+  status    OrderStatus @default(PENDING)
+  userId    String
+  user      User        @relation(fields: [userId], references: [id])
+  items     OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(nanoid())
+  quantity  Int
+  price     Float
+  orderId   String
+  productId String
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Like {
+  id        String  @id @default(nanoid())
+  productId String
+  userId    String
+  product   Product @relation(fields: [productId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@unique([productId, userId])
+}
+
+model Upload {
+  id         String    @id @default(nanoid())
+  url        String
+  userId     String?
+  productId  String?
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+  product    Product?  @relation(fields: [productId], references: [id])
+  user       User?     @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}

@@ -34,6 +34,7 @@ export class FilesController extends BaseController {
         const filePath = destinationPath
         const fileBuffer = fs.readFileSync(filePath);
         const base64 = fileBuffer.toString('base64');
+
         const result = await imagekit.upload({
             file: base64,
             fileName: `${Date.now()}-${file.originalname}`,
